@@ -9,6 +9,9 @@
 // - o'chirilganda: bekor qilish;
 // - ilova ochilganda: bazadagi kelajakdagi hodisalar uchun hammasini tiklash.
 //
+// Aniqlik: telefon ruxsat bergan bo'lsa eslatma aniq vaqtda, bo'lmasa
+// taxminiy rejimda chiqadi (`_rejim()` ga qarang).
+//
 // Nima uchun `timezone` kerak: plagin vaqtni vaqt mintaqasi (masalan,
 // "Asia/Tashkent") bilan birga oladi. Shunda telefon soati yoki mintaqasi
 // o'zgarsa ham eslatma to'g'ri vaqtda chiqadi.
@@ -99,6 +102,23 @@ class NotificationService {
     );
   }
 
+  /// Qaysi rejimda rejalashtirish kerak.
+  ///
+  /// - Telefon aniq vaqtga ruxsat bergan bo'lsa — aniq vaqtda
+  ///   (`exactAllowWhileIdle`), "1 soat oldin" aynan 1 soat oldin keladi.
+  /// - Ruxsat bo'lmasa — taxminiy (`inexactAllowWhileIdle`): ruxsat so'ralmaydi,
+  ///   lekin Android batareyani tejash uchun eslatmani biroz kechiktirishi mumkin.
+  Future<AndroidScheduleMode> _rejim() async {
+    try {
+      final aniqMumkin = await _android?.canScheduleExactNotifications() ?? false;
+      return aniqMumkin
+          ? AndroidScheduleMode.exactAllowWhileIdle
+          : AndroidScheduleMode.inexactAllowWhileIdle;
+    } catch (_) {
+      return AndroidScheduleMode.inexactAllowWhileIdle;
+    }
+  }
+
   /// Hodisaning eslatmalarini (qaytadan) rejalashtiradi.
   Future<void> rejalashtirish(Hodisa hodisa) async {
     final id = hodisa.id;
@@ -106,6 +126,7 @@ class NotificationService {
     // Tahrirlashda eski vaqtdagi eslatmalar qolib ketmasligi uchun avval bekor qilamiz.
     await bekorQilish(id);
 
+    final rejim = await _rejim();
     for (final oraliq in rejalashtiriladiganEslatmalar(hodisa, DateTime.now())) {
       final matn = eslatmaMatni(hodisa, oraliq);
       await _plagin.zonedSchedule(
@@ -114,9 +135,7 @@ class NotificationService {
         body: matn.matn,
         scheduledDate: tz.TZDateTime.from(oraliq.vaqti(hodisa.sana), tz.local),
         notificationDetails: _korinish,
-        // "Taxminiy" rejim: aniq budilnik ruxsati kerak emas. Android
-        // batareyani tejash uchun eslatmani bir necha daqiqaga surishi mumkin.
-        androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+        androidScheduleMode: rejim,
         payload: '$id',
       );
     }
