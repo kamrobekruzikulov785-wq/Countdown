@@ -40,6 +40,10 @@ enum EslatmaOraligi {
   /// Hodisa vaqtidan qancha oldin eslatish kerakligi.
   final Duration oldin;
 
+  /// Eslatma aniq qachon chiqishini hisoblaydi.
+  /// Masalan, hodisa 15-dekabr 09:00 da bo'lsa, "1 soat oldin" → 08:00.
+  DateTime vaqti(DateTime hodisaSanasi) => hodisaSanasi.subtract(oldin);
+
   /// Bazadagi matndan oraliqni tiklaydi. Noma'lum qiymat uchun `null`.
   static EslatmaOraligi? matndan(String qiymat) {
     for (final oraliq in EslatmaOraligi.values) {
