@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Dizayndagi asosiy yashil rang (lib/theme/app_theme.dart dagi urgu). -->
+    <color name="ic_launcher_background">#639922</color>
+</resources>
