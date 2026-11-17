@@ -84,6 +84,8 @@ class _EditScreenState extends State<EditScreen> {
       initialDate: _kun.isBefore(bugun) ? bugun : _kun,
       firstDate: bugun, // o'tgan kunlarni tanlab bo'lmaydi
       lastDate: DateTime(bugun.year + 10, 12, 31),
+      // Faqat kalendar: vaqt oynasidagi kabi klaviatura rejimi o'chirilgan.
+      initialEntryMode: DatePickerEntryMode.calendarOnly,
     );
     if (tanlangan == null) return; // foydalanuvchi bekor qildi
     setState(() {
@@ -96,6 +98,10 @@ class _EditScreenState extends State<EditScreen> {
     final tanlangan = await showTimePicker(
       context: context,
       initialTime: _vaqt,
+      // Faqat soat siferblati. Klaviatura rejimi o'chirilgan: kichik
+      // ekranlarda klaviatura ochilganda Flutter'ning vaqt oynasi
+      // sig'may qolib, xato beradi (material_ui 1.11.1 kutubxonasi xatosi).
+      initialEntryMode: TimePickerEntryMode.dialOnly,
     );
     if (tanlangan == null) return;
     setState(() {
