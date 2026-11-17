@@ -23,6 +23,7 @@ import '../widgets/next_event_card.dart';
 import '../widgets/selectable_pill.dart';
 import '../widgets/stat_tile.dart';
 import '../widgets/week_strip.dart';
+import 'detail_screen.dart';
 import 'edit_screen.dart';
 import 'past_screen.dart';
 
@@ -66,14 +67,6 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-}
-
-/// Hodisani ochadi. Hozircha tahrirlash ekrani, keyingi bosqichda
-/// "Batafsil" ekraniga almashtiriladi.
-void hodisaniOchish(BuildContext context, Hodisa hodisa) {
-  Navigator.of(context).push(
-    MaterialPageRoute<void>(builder: (_) => EditScreen(hodisa: hodisa)),
-  );
 }
 
 class _YaqinlashayotganlarBolimi extends StatelessWidget {

@@ -10,7 +10,7 @@ import '../providers/hodisa_provider.dart';
 import '../providers/soat_provider.dart';
 import '../widgets/countdown_card.dart';
 import '../widgets/empty_state.dart';
-import 'home_screen.dart';
+import 'detail_screen.dart';
 
 class PastScreen extends StatelessWidget {
   const PastScreen({super.key});

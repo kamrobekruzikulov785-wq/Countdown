@@ -42,6 +42,25 @@ class Matnlar {
   static const qoldi = 'qoldi';
   static const hozirgina = 'hozirgina';
 
+  // --- Batafsil ---
+  static const batafsil = 'Batafsil';
+  static const hodisaTopilmadi = 'Hodisa topilmadi';
+  static const hodisaBoshlandi = 'Hodisa boshlandi';
+  static const hodisaOtdi = "Hodisa o'tdi";
+  static const eslatmaYoq = "Eslatma qo'yilmagan";
+  static const ochirish = "O'chirish";
+  static const ochirishSavol = "Hodisani o'chirasizmi?";
+  static const bekorQilish = 'Bekor qilish';
+  static const ochirildi = "O'chirildi";
+  static const ochirishXatosi = "O'chirib bo'lmadi. Qayta urinib ko'ring.";
+
+  /// O'chirishni tasdiqlash oynasidagi matn.
+  static String ochirishIzoh(String nomi) =>
+      "\"$nomi\" butunlay o'chiriladi. Buni qaytarib bo'lmaydi.";
+
+  /// Halqa ostidagi matn: "Kutish vaqtining 82% o'tdi".
+  static String kutishFoizi(int foiz) => "Kutish vaqtining $foiz% o'tdi";
+
   // --- Qo'shish va tahrirlash ---
   static const yangiHodisa = 'Yangi hodisa';
   static const tahrirlash = 'Tahrirlash';

@@ -58,6 +58,14 @@ class HodisaProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Hodisani `id` bo'yicha topadi. Topilmasa (masalan, o'chirilgan) — `null`.
+  Hodisa? idBoyicha(int id) {
+    for (final h in _hodisalar) {
+      if (h.id == id) return h;
+    }
+    return null;
+  }
+
   /// Hali boshlanmagan hodisalar (filtr bilan), eng yaqini birinchi.
   List<Hodisa> kelayotganlar(DateTime hozir) {
     return _hodisalar
