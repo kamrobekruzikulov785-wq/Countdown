@@ -1,4 +1,5 @@
-// Sozlamalar ekrani: ism, mavzu (yorug'/qorong'i) va standart eslatma.
+// Sozlamalar ekrani: ism, mavzu (yorug'/qorong'i), standart eslatma va
+// bildirishnoma ruxsati holati ("Sinov bildirishnomasi" tugmasi bilan).
 // Har bir o'zgarish darhol saqlanadi, alohida "Saqlash" tugmasi kerak emas.
 
 import 'package:material_ui/material_ui.dart';
@@ -8,6 +9,7 @@ import '../constants/matnlar.dart';
 import '../models/hodisa.dart';
 import '../providers/sozlamalar_provider.dart';
 import '../theme/app_theme.dart';
+import '../widgets/notification_status.dart';
 import '../widgets/section_label.dart';
 import '../widgets/selectable_pill.dart';
 
@@ -85,6 +87,9 @@ class SettingsScreen extends StatelessWidget {
             style: TextStyle(fontSize: 12, color: r.ikkinchiMatn),
           ),
         ),
+        const SizedBox(height: 24),
+        const SectionLabel(Matnlar.bildirishnomalar),
+        const NotificationStatus(),
         const SizedBox(height: 40),
         Text(
           Matnlar.ilovaHaqida,

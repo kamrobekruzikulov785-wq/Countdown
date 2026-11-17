@@ -56,6 +56,20 @@ class Matnlar {
       "Yangi hodisa qo'shganda shu eslatma oldindan belgilanadi.";
   static const ilovaHaqida = 'Countdown 1.0 · Internetsiz ishlaydi';
 
+  // --- Bildirishnomalar ---
+  static const bildirishnomalar = 'Bildirishnomalar';
+  static const bildirishnomaYoqilgan = 'Bildirishnomalar yoqilgan';
+  static const bildirishnomaYoqilganIzoh = "Eslatmalar o'z vaqtida keladi.";
+  static const bildirishnomaOchiq = "Bildirishnomalar o'chirilgan";
+  static const bildirishnomaOchiqIzoh =
+      "Ruxsat berilmasa, eslatmalar chiqmaydi. Sanoq baribir ishlaydi.";
+  static const ruxsatBerish = 'Ruxsat berish';
+  static const sinovBildirishnomasi = 'Sinov bildirishnomasi';
+  static const sinovYuborildi = 'Sinov bildirishnomasi yuborildi';
+  static const ruxsatYoqSaqlandi =
+      "Saqlandi. Bildirishnomalarga ruxsat yo'q, shuning uchun eslatmalar "
+      'chiqmaydi. Uni sozlamalarda yoqish mumkin.';
+
   // --- Batafsil ---
   static const batafsil = 'Batafsil';
   static const hodisaTopilmadi = 'Hodisa topilmadi';

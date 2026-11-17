@@ -15,6 +15,7 @@ import '../constants/matnlar.dart';
 import '../models/hodisa.dart';
 import '../providers/hodisa_provider.dart';
 import '../providers/sozlamalar_provider.dart';
+import '../services/notification_service.dart';
 import '../theme/app_theme.dart';
 import '../utils/sana_format.dart';
 import '../utils/validators.dart';
@@ -121,6 +122,15 @@ class _EditScreenState extends State<EditScreen> {
     });
   }
 
+  /// Ruxsatni so'raydi. Xato bo'lsa ham saqlash to'xtamaydi.
+  Future<bool> _ruxsatniTekshirish() async {
+    try {
+      return await NotificationService.instance.ruxsatSorash();
+    } catch (_) {
+      return false;
+    }
+  }
+
   Future<void> _saqlash() async {
     final hozir = DateTime.now();
     final formaTogri = _formKaliti.currentState!.validate();
@@ -154,7 +164,19 @@ class _EditScreenState extends State<EditScreen> {
       } else {
         await provider.yangilash(hodisa);
       }
-      xabarchi.showSnackBar(const SnackBar(content: Text(Matnlar.saqlandi)));
+      // Eslatma tanlangan bo'lsa, bildirishnomaga ruxsat bor-yo'qligini
+      // tekshiramiz (Android 13+ da birinchi marta so'rash oynasi chiqadi).
+      var ruxsatBor = true;
+      if (hodisa.eslatmalar.isNotEmpty) {
+        ruxsatBor = await _ruxsatniTekshirish();
+      }
+      xabarchi.showSnackBar(
+        SnackBar(
+          content: Text(
+            ruxsatBor ? Matnlar.saqlandi : Matnlar.ruxsatYoqSaqlandi,
+          ),
+        ),
+      );
       navigator.pop();
     } catch (_) {
       if (mounted) setState(() => _saqlanmoqda = false);

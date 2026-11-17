@@ -5,19 +5,25 @@
 // unga bog'langan ekranlar avtomatik qayta chiziladi.
 //
 // Ma'lumot oqimi: Ekran -> HodisaProvider -> HodisaRepository -> SQLite
+// Har bir o'zgarishdan keyin eslatmalar ham yangilanadi (NotificationService).
 
 import 'package:flutter/foundation.dart';
 
 import '../constants/matnlar.dart';
 import '../data/hodisa_repository.dart';
 import '../models/hodisa.dart';
+import '../services/notification_service.dart';
 import '../utils/sana_format.dart';
 
 class HodisaProvider extends ChangeNotifier {
-  HodisaProvider({HodisaRepository? repository})
-      : _repository = repository ?? HodisaRepository();
+  HodisaProvider({
+    HodisaRepository? repository,
+    NotificationService? bildirishnoma,
+  })  : _repository = repository ?? HodisaRepository(),
+        _bildirishnoma = bildirishnoma ?? NotificationService.instance;
 
   final HodisaRepository _repository;
+  final NotificationService _bildirishnoma;
 
   List<Hodisa> _hodisalar = [];
   bool _yuklanmoqda = true;
@@ -49,6 +55,20 @@ class HodisaProvider extends ChangeNotifier {
     } finally {
       _yuklanmoqda = false;
       notifyListeners();
+    }
+    // Ilova ochilganda kelajakdagi hodisalar eslatmalarini tekshirib tiklaymiz.
+    if (_xato == null) {
+      await _eslatmaBilan(() => _bildirishnoma.hammasiniTiklash(_hodisalar));
+    }
+  }
+
+  /// Eslatma bilan bog'liq ishni bajaradi. Xato bo'lsa ham hodisa saqlanib
+  /// qoladi va ilova qulamaydi (masalan, bildirishnomaga ruxsat berilmagan).
+  Future<void> _eslatmaBilan(Future<void> Function() ish) async {
+    try {
+      await ish();
+    } catch (xato) {
+      debugPrint('Eslatma xatosi: $xato');
     }
   }
 
@@ -109,6 +129,7 @@ class HodisaProvider extends ChangeNotifier {
     _hodisalar.add(saqlangan);
     _tartiblash();
     notifyListeners();
+    await _eslatmaBilan(() => _bildirishnoma.rejalashtirish(saqlangan));
   }
 
   /// Mavjud hodisani yangilaydi.
@@ -118,6 +139,8 @@ class HodisaProvider extends ChangeNotifier {
     if (indeks != -1) _hodisalar[indeks] = hodisa;
     _tartiblash();
     notifyListeners();
+    // Eski eslatmalar bekor qilinib, yangi vaqt bo'yicha qayta qo'yiladi.
+    await _eslatmaBilan(() => _bildirishnoma.rejalashtirish(hodisa));
   }
 
   /// Hodisani o'chiradi.
@@ -125,6 +148,7 @@ class HodisaProvider extends ChangeNotifier {
     await _repository.ochirish(id);
     _hodisalar.removeWhere((h) => h.id == id);
     notifyListeners();
+    await _eslatmaBilan(() => _bildirishnoma.bekorQilish(id));
   }
 
   /// Ro'yxatni sana bo'yicha tartiblaydi (eng yaqini birinchi).

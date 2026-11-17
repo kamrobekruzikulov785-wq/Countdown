@@ -17,6 +17,7 @@ import 'providers/hodisa_provider.dart';
 import 'providers/soat_provider.dart';
 import 'providers/sozlamalar_provider.dart';
 import 'screens/home_screen.dart';
+import 'services/notification_service.dart';
 import 'theme/app_theme.dart';
 
 Future<void> main() async {
@@ -27,6 +28,13 @@ Future<void> main() async {
 
   final sozlamalar = SozlamalarProvider();
   await sozlamalar.yuklash();
+
+  // Bildirishnomalarni tayyorlaymiz. Xato bo'lsa ham ilova ochilaveradi.
+  try {
+    await NotificationService.instance.ishgaTushirish();
+  } catch (xato) {
+    debugPrint('Bildirishnomalarni sozlab bo\'lmadi: $xato');
+  }
 
   runApp(
     MultiProvider(
