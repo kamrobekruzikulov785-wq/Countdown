@@ -38,6 +38,7 @@ class _EditScreenState extends State<EditScreen> {
 
   late final TextEditingController _nomController;
   late final TextEditingController _izohController;
+  final _aylantirish = ScrollController(); // xato bo'lsa tepaga qaytish uchun
   late DateTime _kun; // faqat sana (soatsiz)
   late TimeOfDay _vaqt; // faqat soat va daqiqa
   late HodisaTuri _turi;
@@ -76,6 +77,7 @@ class _EditScreenState extends State<EditScreen> {
   void dispose() {
     _nomController.dispose();
     _izohController.dispose();
+    _aylantirish.dispose();
     super.dispose();
   }
 
@@ -136,7 +138,18 @@ class _EditScreenState extends State<EditScreen> {
     final formaTogri = _formKaliti.currentState!.validate();
     final sanaXatosi = Validatorlar.sana(_tanlanganSana, hozir);
     setState(() => _sanaXatosi = sanaXatosi);
-    if (!formaTogri || sanaXatosi != null) return; // xato bor: saqlamaymiz
+    if (!formaTogri || sanaXatosi != null) {
+      // Xato bor: saqlamaymiz. Nom yoki sana xatosi tepada bo'lgani uchun
+      // foydalanuvchi uni ko'rishi uchun ekranni yuqoriga suramiz.
+      if (Validatorlar.nom(_nomController.text) != null || sanaXatosi != null) {
+        _aylantirish.animateTo(
+          0,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+      return;
+    }
 
     // `await` dan keyin `context` ishlatmaslik uchun kerakli narsalarni
     // oldindan olib qo'yamiz.
@@ -202,118 +215,129 @@ class _EditScreenState extends State<EditScreen> {
       body: SafeArea(
         child: Form(
           key: _formKaliti,
-          child: ListView(
+          // ListView emas, SingleChildScrollView + Column: barcha maydonlar
+          // doim "tirik" turadi. ListView ekrandan uzoqlashgan maydonlarni
+          // xotiradan chiqaradi va ular tekshirilmay qolishi mumkin edi.
+          child: SingleChildScrollView(
+            controller: _aylantirish,
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
-            children: [
-              const SectionLabel(Matnlar.nomi),
-              TextFormField(
-                controller: _nomController,
-                maxLength: Validatorlar.nomMaxUzunlik,
-                textCapitalization: TextCapitalization.sentences,
-                decoration: const InputDecoration(hintText: Matnlar.nomiMisol),
-                validator: Validatorlar.nom,
-              ),
-              const SizedBox(height: 8),
-              Row(
-                children: [
-                  Expanded(
-                    child: _TanlashKartochkasi(
-                      sarlavha: Matnlar.sana,
-                      qiymat: kunVaOy(_kun),
-                      belgi: Icons.calendar_today_outlined,
-                      xato: _sanaXatosi != null,
-                      onTap: _sanaTanlash,
-                    ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const SectionLabel(Matnlar.nomi),
+                TextFormField(
+                  controller: _nomController,
+                  maxLength: Validatorlar.nomMaxUzunlik,
+                  textCapitalization: TextCapitalization.sentences,
+                  decoration: const InputDecoration(
+                    hintText: Matnlar.nomiMisol,
                   ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: _TanlashKartochkasi(
-                      sarlavha: Matnlar.vaqt,
-                      qiymat: soatMinut(_vaqt.hour, _vaqt.minute),
-                      belgi: Icons.schedule,
-                      xato: _sanaXatosi != null,
-                      onTap: _vaqtTanlash,
-                    ),
-                  ),
-                ],
-              ),
-              if (_sanaXatosi != null)
-                Padding(
-                  padding: const EdgeInsets.only(left: 16, top: 8),
-                  child: Text(
-                    _sanaXatosi!,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Theme.of(context).colorScheme.error,
-                    ),
-                  ),
+                  validator: Validatorlar.nom,
                 ),
-              const SizedBox(height: 20),
-              const SectionLabel(Matnlar.tur),
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: [
-                  for (final tur in HodisaTuri.values)
-                    SelectablePill(
-                      matn: tur.nomi,
-                      tanlangan: tur == _turi,
-                      onTap: () => setState(() => _turi = tur),
-                    ),
-                ],
-              ),
-              const SizedBox(height: 20),
-              const SectionLabel(Matnlar.eslatmalar),
-              Card(
-                clipBehavior: Clip.antiAlias,
-                child: Column(
+                const SizedBox(height: 8),
+                Row(
                   children: [
-                    for (final oraliq in EslatmaOraligi.values)
-                      CheckboxListTile(
-                        value: _eslatmalar.contains(oraliq),
-                        title: Text(oraliq.nomi),
-                        activeColor: r.urgu,
-                        checkColor: r.urguUstida,
-                        onChanged: (belgi) =>
-                            _eslatmaniAlmashtirish(oraliq, belgi),
+                    Expanded(
+                      child: _TanlashKartochkasi(
+                        sarlavha: Matnlar.sana,
+                        qiymat: kunVaOy(_kun),
+                        belgi: Icons.calendar_today_outlined,
+                        xato: _sanaXatosi != null,
+                        onTap: _sanaTanlash,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: _TanlashKartochkasi(
+                        sarlavha: Matnlar.vaqt,
+                        qiymat: soatMinut(_vaqt.hour, _vaqt.minute),
+                        belgi: Icons.schedule,
+                        xato: _sanaXatosi != null,
+                        onTap: _vaqtTanlash,
+                      ),
+                    ),
+                  ],
+                ),
+                if (_sanaXatosi != null)
+                  Padding(
+                    padding: const EdgeInsets.only(left: 16, top: 8),
+                    child: Text(
+                      _sanaXatosi!,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Theme.of(context).colorScheme.error,
+                      ),
+                    ),
+                  ),
+                const SizedBox(height: 20),
+                const SectionLabel(Matnlar.tur),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    for (final tur in HodisaTuri.values)
+                      SelectablePill(
+                        matn: tur.nomi,
+                        tanlangan: tur == _turi,
+                        onTap: () => setState(() => _turi = tur),
                       ),
                   ],
                 ),
-              ),
-              if (otganEslatmalar.isNotEmpty)
-                _Ogohlantirish(
-                  matn: Matnlar.eslatmaOtgan(
-                    otganEslatmalar.map((e) => e.nomi).join(', '),
+                const SizedBox(height: 20),
+                const SectionLabel(Matnlar.eslatmalar),
+                Card(
+                  clipBehavior: Clip.antiAlias,
+                  child: Column(
+                    children: [
+                      for (final oraliq in EslatmaOraligi.values)
+                        CheckboxListTile(
+                          value: _eslatmalar.contains(oraliq),
+                          title: Text(oraliq.nomi),
+                          activeColor: r.urgu,
+                          checkColor: r.urguUstida,
+                          onChanged: (belgi) =>
+                              _eslatmaniAlmashtirish(oraliq, belgi),
+                        ),
+                    ],
                   ),
                 ),
-              const SizedBox(height: 20),
-              const SectionLabel(Matnlar.rang),
-              _RangTanlash(
-                tanlangan: _rang,
-                onTanlash: (rang) => setState(() => _rang = rang),
-              ),
-              const SizedBox(height: 20),
-              const SectionLabel(Matnlar.izoh),
-              TextFormField(
-                controller: _izohController,
-                maxLength: Validatorlar.izohMaxUzunlik,
-                minLines: 2,
-                maxLines: 4,
-                textCapitalization: TextCapitalization.sentences,
-                decoration: const InputDecoration(hintText: Matnlar.izohMisol),
-                validator: Validatorlar.izoh,
-              ),
-              const SizedBox(height: 16),
-              FilledButton(
-                onPressed: _saqlanmoqda ? null : _saqlash,
-                child: _saqlanmoqda
-                    ? const SizedBox.square(
-                        dimension: 22,
-                        child: CircularProgressIndicator(strokeWidth: 2.5),
-                      )
-                    : const Text(Matnlar.saqlash),
-              ),
-            ],
+                if (otganEslatmalar.isNotEmpty)
+                  _Ogohlantirish(
+                    matn: Matnlar.eslatmaOtgan(
+                      otganEslatmalar.map((e) => e.nomi).join(', '),
+                    ),
+                  ),
+                const SizedBox(height: 20),
+                const SectionLabel(Matnlar.rang),
+                _RangTanlash(
+                  tanlangan: _rang,
+                  onTanlash: (rang) => setState(() => _rang = rang),
+                ),
+                const SizedBox(height: 20),
+                const SectionLabel(Matnlar.izoh),
+                TextFormField(
+                  controller: _izohController,
+                  maxLength: Validatorlar.izohMaxUzunlik,
+                  minLines: 2,
+                  maxLines: 4,
+                  textCapitalization: TextCapitalization.sentences,
+                  decoration: const InputDecoration(
+                    hintText: Matnlar.izohMisol,
+                  ),
+                  validator: Validatorlar.izoh,
+                ),
+                const SizedBox(height: 16),
+                FilledButton(
+                  onPressed: _saqlanmoqda ? null : _saqlash,
+                  child: _saqlanmoqda
+                      ? const SizedBox.square(
+                          dimension: 22,
+                          child: CircularProgressIndicator(strokeWidth: 2.5),
+                        )
+                      : const Text(Matnlar.saqlash),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -402,7 +426,11 @@ class _Ogohlantirish extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(Icons.warning_amber_rounded, size: 20, color: r.ogohlantirishMatn),
+          Icon(
+            Icons.warning_amber_rounded,
+            size: 20,
+            color: r.ogohlantirishMatn,
+          ),
           const SizedBox(width: 8),
           Expanded(
             child: Text(

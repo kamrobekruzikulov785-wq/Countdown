@@ -26,9 +26,6 @@ void main() {
     final yaratilgan = DateTime(2026, 12, 1);
     final sana = DateTime(2026, 12, 21);
     final hozir = DateTime(2026, 12, 11);
-    expect(
-      kutishUlushi(yaratilgan: yaratilgan, sana: sana, hozir: hozir),
-      0.5,
-    );
+    expect(kutishUlushi(yaratilgan: yaratilgan, sana: sana, hozir: hozir), 0.5);
   });
 }

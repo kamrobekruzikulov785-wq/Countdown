@@ -77,7 +77,10 @@ class CountdownCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 10),
+                  // Nom uchun joyning 3/5 qismi, sanoq uchun 2/5 qismi.
+                  // Tor ekranda yoki katta shriftda ham hech narsa chiqib ketmaydi.
                   Expanded(
+                    flex: 3,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -99,11 +102,15 @@ class CountdownCard extends StatelessWidget {
                               color: r.ikkinchiMatn,
                             ),
                             const SizedBox(width: 4),
-                            Text(
-                              hodisa.turi.nomi,
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: r.ikkinchiMatn,
+                            Flexible(
+                              child: Text(
+                                hodisa.turi.nomi,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: r.ikkinchiMatn,
+                                ),
                               ),
                             ),
                           ],
@@ -112,13 +119,24 @@ class CountdownCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 12),
-                  Text(
-                    sanoq,
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      color: sanoqRangi,
-                      fontFeatures: tengRaqamlar,
+                  // Sanoq sig'masa, o'qiladigan darajada kichrayadi (lekin kesilmaydi).
+                  Flexible(
+                    flex: 2,
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(
+                          sanoq,
+                          maxLines: 1,
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: sanoqRangi,
+                            fontFeatures: tengRaqamlar,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                 ],

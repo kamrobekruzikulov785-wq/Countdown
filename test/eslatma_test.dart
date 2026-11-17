@@ -25,8 +25,14 @@ void main() {
 
   test('eslatma vaqti: hodisa vaqtidan oraliq ayriladi', () {
     final sana = imtihon.sana;
-    expect(EslatmaOraligi.birKunOldin.vaqti(sana), DateTime(2026, 12, 14, 9, 0));
-    expect(EslatmaOraligi.birSoatOldin.vaqti(sana), DateTime(2026, 12, 15, 8, 0));
+    expect(
+      EslatmaOraligi.birKunOldin.vaqti(sana),
+      DateTime(2026, 12, 14, 9, 0),
+    );
+    expect(
+      EslatmaOraligi.birSoatOldin.vaqti(sana),
+      DateTime(2026, 12, 15, 8, 0),
+    );
     expect(EslatmaOraligi.aynanVaqtida.vaqti(sana), sana);
   });
 
@@ -50,9 +56,8 @@ void main() {
   test("vaqti o'tib ketgan eslatma rejalashtirilmaydi", () {
     // Imtihonga 30 daqiqa qolgan: "1 kun" va "1 soat oldin" allaqachon o'tgan.
     final hozir = DateTime(2026, 12, 15, 8, 30);
-    expect(
-      rejalashtiriladiganEslatmalar(imtihon, hozir),
-      [EslatmaOraligi.aynanVaqtida],
-    );
+    expect(rejalashtiriladiganEslatmalar(imtihon, hozir), [
+      EslatmaOraligi.aynanVaqtida,
+    ]);
   });
 }
