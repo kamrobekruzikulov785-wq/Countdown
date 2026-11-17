@@ -18,6 +18,7 @@ class Matnlar {
   static const haliHodisaYoqIzoh =
       "Imtihon yoki muhim sanani qo'shing. Qolgan vaqtni shu yerda sanab boramiz.";
   static const buTurdaHodisaYoq = "Bu turda yaqinlashayotgan hodisa yo'q";
+  static const yaqinlashayotganYoq = "Yaqinlashayotgan hodisa yo'q";
   static const yuklashXatosi =
       "Ma'lumotlarni o'qib bo'lmadi. Qayta urinib ko'ring.";
   static const qaytaUrinish = 'Qayta urinish';
