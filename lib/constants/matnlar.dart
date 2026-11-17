@@ -42,6 +42,20 @@ class Matnlar {
   static const qoldi = 'qoldi';
   static const hozirgina = 'hozirgina';
 
+  // --- Sozlamalar ---
+  static const sozlamalar = 'Sozlamalar';
+  static const ismingiz = 'Ismingiz';
+  static const ismMisol = 'Ismingizni yozing';
+  static const ismIzoh = "Bosh ekrandagi salomlashuvda ko'rinadi.";
+  static const mavzu = 'Mavzu';
+  static const mavzuTelefon = "Telefon bo'yicha";
+  static const mavzuYorug = "Yorug'";
+  static const mavzuQorongi = "Qorong'i";
+  static const standartEslatma = 'Standart eslatma';
+  static const standartEslatmaIzoh =
+      "Yangi hodisa qo'shganda shu eslatma oldindan belgilanadi.";
+  static const ilovaHaqida = 'Countdown 1.0 · Internetsiz ishlaydi';
+
   // --- Batafsil ---
   static const batafsil = 'Batafsil';
   static const hodisaTopilmadi = 'Hodisa topilmadi';

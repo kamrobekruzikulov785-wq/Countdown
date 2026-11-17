@@ -14,6 +14,7 @@ import 'package:provider/provider.dart';
 import '../constants/matnlar.dart';
 import '../models/hodisa.dart';
 import '../providers/hodisa_provider.dart';
+import '../providers/sozlamalar_provider.dart';
 import '../theme/app_theme.dart';
 import '../utils/sana_format.dart';
 import '../utils/validators.dart';
@@ -63,9 +64,9 @@ class _EditScreenState extends State<EditScreen> {
     _kun = DateTime(sana.year, sana.month, sana.day);
     _vaqt = TimeOfDay(hour: sana.hour, minute: sana.minute);
     _turi = h?.turi ?? HodisaTuri.imtihon;
+    // Yangi hodisada sozlamalardagi standart eslatma oldindan belgilanadi.
     _eslatmalar = Set.of(
-      h?.eslatmalar ??
-          const [EslatmaOraligi.birKunOldin, EslatmaOraligi.birSoatOldin],
+      h?.eslatmalar ?? [context.read<SozlamalarProvider>().standartEslatma],
     );
     _rang = h?.rang ?? hodisaRanglari.first.toARGB32();
   }

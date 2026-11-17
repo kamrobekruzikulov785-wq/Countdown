@@ -1,9 +1,11 @@
 // Ilovaning kirish nuqtasi: dastur shu yerdan boshlanadi.
 //
 // 1. O'zbekcha sana nomlarini ("dekabr", "seshanba") yuklaydi.
-// 2. Provider'larni yaratadi: SoatProvider (har soniyalik taymer) va
-//    HodisaProvider (hodisalar ro'yxati, bazadan o'qiladi).
-// 3. Mavzu (yorug'/qorong'i) va o'zbek tilini sozlab, bosh ekranni ochadi.
+// 2. Sozlamalarni (ism, mavzu) oldindan o'qiydi: shunda ilova birinchi
+//    kadrdanoq to'g'ri mavzuda ochiladi.
+// 3. Provider'larni yaratadi: SoatProvider (har soniyalik taymer),
+//    HodisaProvider (hodisalar ro'yxati) va SozlamalarProvider.
+// 4. Mavzu va o'zbek tilini sozlab, bosh ekranni ochadi.
 
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
@@ -13,6 +15,7 @@ import 'package:provider/provider.dart';
 import 'constants/matnlar.dart';
 import 'providers/hodisa_provider.dart';
 import 'providers/soat_provider.dart';
+import 'providers/sozlamalar_provider.dart';
 import 'screens/home_screen.dart';
 import 'theme/app_theme.dart';
 
@@ -22,9 +25,13 @@ Future<void> main() async {
   await initializeDateFormatting('uz');
   Intl.defaultLocale = 'uz';
 
+  final sozlamalar = SozlamalarProvider();
+  await sozlamalar.yuklash();
+
   runApp(
     MultiProvider(
       providers: [
+        ChangeNotifierProvider.value(value: sozlamalar),
         ChangeNotifierProvider(create: (_) => SoatProvider()),
         // `..yuklash()` — provider yaratilishi bilan bazadan o'qishni boshlaydi.
         ChangeNotifierProvider(create: (_) => HodisaProvider()..yuklash()),
@@ -44,7 +51,8 @@ class CountdownIlovasi extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ilovaMavzusi(Brightness.light),
       darkTheme: ilovaMavzusi(Brightness.dark),
-      themeMode: ThemeMode.system, // telefon sozlamasiga qarab
+      // Sozlamalarda tanlangan mavzu: telefon bo'yicha, yorug' yoki qorong'i.
+      themeMode: context.watch<SozlamalarProvider>().mavzu,
       // Sana va vaqt tanlash oynalari ham o'zbekcha bo'lishi uchun.
       locale: const Locale('uz'),
       supportedLocales: const [Locale('uz')],

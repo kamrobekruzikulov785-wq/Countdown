@@ -1,8 +1,9 @@
 // Bosh ekran.
 //
-// Ikki bo'limdan iborat (pastki menyu orqali almashadi):
+// Uch bo'limdan iborat (pastki menyu orqali almashadi):
 //   0 — yaqinlashayotgan hodisalar (shu faylda);
-//   1 — o'tgan hodisalar (past_screen.dart).
+//   1 — o'tgan hodisalar (past_screen.dart);
+//   2 — sozlamalar (settings_screen.dart).
 //
 // Sanoqlar har soniyada yangilanadi: ekran SoatProvider'ni "tinglaydi"
 // (`context.watch`), soat tiqillaganda qayta chiziladi.
@@ -14,6 +15,7 @@ import '../constants/matnlar.dart';
 import '../models/hodisa.dart';
 import '../providers/hodisa_provider.dart';
 import '../providers/soat_provider.dart';
+import '../providers/sozlamalar_provider.dart';
 import '../theme/app_theme.dart';
 import '../utils/sana_format.dart';
 import '../widgets/bottom_menu.dart';
@@ -26,6 +28,7 @@ import '../widgets/week_strip.dart';
 import 'detail_screen.dart';
 import 'edit_screen.dart';
 import 'past_screen.dart';
+import 'settings_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -57,6 +60,7 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             _YaqinlashayotganlarBolimi(onQoshish: _yangiHodisa),
             const PastScreen(),
+            const SettingsScreen(),
           ],
         ),
       ),
@@ -165,7 +169,8 @@ class _YaqinlashayotganlarBolimi extends StatelessWidget {
   }
 }
 
-/// Bugungi sana va salomlashuv: "Xayrli tong," / "xush kelibsiz".
+/// Bugungi sana va salomlashuv: "Xayrli tong," / "Kamronbek".
+/// Ism sozlamalarda kiritilmagan bo'lsa, "xush kelibsiz" yoziladi.
 class _Sarlavha extends StatelessWidget {
   const _Sarlavha({required this.hozir});
 
@@ -174,6 +179,7 @@ class _Sarlavha extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final r = context.ranglar;
+    final ism = context.watch<SozlamalarProvider>().ism;
     const kattaYozuv = TextStyle(
       fontSize: 28,
       fontWeight: FontWeight.w500,
@@ -189,7 +195,9 @@ class _Sarlavha extends StatelessWidget {
         const SizedBox(height: 12),
         Text('${salomlashuv(hozir)},', style: kattaYozuv),
         Text(
-          Matnlar.xushKelibsiz,
+          ism.isEmpty ? Matnlar.xushKelibsiz : ism,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
           style: kattaYozuv.copyWith(color: r.ikkinchiMatn),
         ),
       ],

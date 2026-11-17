@@ -14,7 +14,8 @@ class BottomMenu extends StatelessWidget {
     required this.onQoshish,
   });
 
-  /// Hozir qaysi bo'lim ochiq: 0 — bosh sahifa, 1 — o'tgan hodisalar.
+  /// Hozir qaysi bo'lim ochiq: 0 — bosh sahifa, 1 — o'tgan hodisalar,
+  /// 2 — sozlamalar.
   final int tanlanganIndeks;
   final ValueChanged<int> onTanlash;
   final VoidCallback onQoshish;
@@ -53,6 +54,14 @@ class BottomMenu extends StatelessWidget {
                       tavsif: Matnlar.otganHodisalar,
                       tanlangan: tanlanganIndeks == 1,
                       onTap: () => onTanlash(1),
+                    ),
+                    const SizedBox(width: 16),
+                    _MenyuTugmasi(
+                      belgi: Icons.settings_outlined,
+                      tanlanganBelgi: Icons.settings,
+                      tavsif: Matnlar.sozlamalar,
+                      tanlangan: tanlanganIndeks == 2,
+                      onTap: () => onTanlash(2),
                     ),
                   ],
                 ),
